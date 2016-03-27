@@ -21,22 +21,32 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"sandep");
-    UIImage *inputImage = [UIImage imageNamed:@"mirrorimage.png"]; // The WID.jpg example is greater than 2048 pixels tall, so it fails on older devices
     
     stillCamera=[[GPUImageStillCamera alloc]initWithSessionPreset:AVCaptureSessionPreset640x480 cameraPosition:AVCaptureDevicePositionFront];
     stillCamera.outputImageOrientation=UIInterfaceOrientationPortrait;
-    image=[[GPUImageView alloc]initWithFrame:CGRectMake(30.0, 35.0, 260, 490)];
-    image.alpha=0.7;
+    image=[[GPUImageView alloc]initWithFrame:self.view.frame];
+    image.alpha=0.6;
     [image setBackgroundColor:[UIColor redColor]];
     image.fillMode=kGPUImageFillModePreserveAspectRatioAndFill;
     filter=[[GPUImageGrayscaleFilter alloc]init];
     [self.view addSubview:image];
-    //[self.view bringSubviewToFront:btnCapture];
+//    [self.view bringSubviewToFront:btnCapture];
     [stillCamera addTarget:image];
-   // [filter addTarget:image];
+    [filter addTarget:image];
     [stillCamera startCameraCapture];
+    
+    if (stillCamera.cameraPosition == AVCaptureDevicePositionFront) {
+        [image setInputRotation:kGPUImageRotate180 atIndex:0];
+    }
+    
 
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = self.view.bounds;
+    gradient.colors = @[(id)[[UIColor lightGrayColor] CGColor],
+                        (id)[[UIColor darkGrayColor] CGColor]];
+    [self.view.layer insertSublayer:gradient atIndex:0];
+    
 }
 
 - (IBAction)btnCaptureClicked:(id)sender
